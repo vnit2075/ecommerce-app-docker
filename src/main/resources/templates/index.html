@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEZ - Premium Online Shopping</title>
+    <meta name="description" content="Discover thousands of products across electronics, fashion, home and more at ShopEZ.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Navbar -->
+<div th:replace="~{layout :: navbar}"></div>
+
+<!-- ===== HERO SECTION ===== -->
+<section class="hero">
+    <div class="hero-bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+    <div class="container hero-content">
+        <div class="hero-text">
+            <div class="hero-badge">
+                <i class="bi bi-lightning-fill"></i>
+                Flash Sale — Up to 50% Off!
+            </div>
+            <h1 class="hero-title">Shop Smarter,<br><span class="gradient-text">Live Better.</span></h1>
+            <p class="hero-subtitle">Explore thousands of products curated just for you — from electronics to fashion, home decor and beyond.</p>
+            <div class="hero-actions">
+                <a href="/products" class="btn btn-primary btn-lg">
+                    <i class="bi bi-bag-fill"></i> Shop Now
+                </a>
+                <a href="#categories" class="btn btn-ghost btn-lg">
+                    Browse Categories <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat"><span class="stat-num">50K+</span><span class="stat-label">Products</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat"><span class="stat-num">1M+</span><span class="stat-label">Customers</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat"><span class="stat-num">4.9★</span><span class="stat-label">Rating</span></div>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="hero-card hero-card-1">
+                <i class="bi bi-shield-check"></i>
+                <span>Secure Payments</span>
+            </div>
+            <div class="hero-card hero-card-2">
+                <i class="bi bi-truck"></i>
+                <span>Free Delivery</span>
+            </div>
+            <div class="hero-card hero-card-3">
+                <i class="bi bi-arrow-counterclockwise"></i>
+                <span>Easy Returns</span>
+            </div>
+            <div class="hero-illustration">
+                <div class="illustration-circle">
+                    <i class="bi bi-bag-heart-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FEATURES BAR ===== -->
+<section class="features-bar">
+    <div class="container features-grid">
+        <div class="feature-item">
+            <i class="bi bi-truck"></i>
+            <div>
+                <h4>Free Shipping</h4>
+                <p>On orders above ₹499</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <i class="bi bi-shield-check"></i>
+            <div>
+                <h4>Secure Payment</h4>
+                <p>100% safe transactions</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <i class="bi bi-arrow-counterclockwise"></i>
+            <div>
+                <h4>Easy Returns</h4>
+                <p>30-day return policy</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <i class="bi bi-headset"></i>
+            <div>
+                <h4>24/7 Support</h4>
+                <p>Always here to help</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CATEGORIES SECTION ===== -->
+<section class="section" id="categories">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Shop by Category</h2>
+            <p class="section-subtitle">Find exactly what you're looking for</p>
+        </div>
+        <div class="categories-grid">
+            <a th:each="cat : ${categories}"
+               th:href="@{'/category/' + ${cat.id}}"
+               class="category-card"
+               th:style="${cat.imageUrl != null} ? 'background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.55)), url(' + ${cat.imageUrl} + ')' : ''">
+                <span class="category-name" th:text="${cat.name}">Category</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FEATURED PRODUCTS ===== -->
+<section class="section section-alt">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Featured Products</h2>
+            <a href="/products" class="section-link">View All <i class="bi bi-arrow-right"></i></a>
+        </div>
+        <div class="products-grid">
+            <div th:each="product : ${featuredProducts}" class="product-card" th:attr="data-id=${product.id}">
+                <div class="product-image-wrap">
+                    <a th:href="@{'/products/' + ${product.id}}">
+                        <img th:src="${product.imageUrl}" th:alt="${product.name}" class="product-img"
+                             onerror="this.src='/images/no-image.png'">
+                    </a>
+                    <div class="product-badges">
+                        <span th:if="${product.discountPrice != null}" class="badge badge-sale">SALE</span>
+                        <span th:if="${!product.inStock}" class="badge badge-out">Out of Stock</span>
+                    </div>
+                    <div class="product-overlay">
+                        <a th:href="@{'/products/' + ${product.id}}" class="overlay-btn">
+                            <i class="bi bi-eye"></i> Quick View
+                        </a>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <span class="product-category" th:text="${product.category?.name}">Category</span>
+                    <a th:href="@{'/products/' + ${product.id}}" class="product-name" th:text="${product.name}">Product Name</a>
+                    <span class="product-brand" th:text="${product.brand}">Brand</span>
+                    <div class="product-price-row">
+                        <div class="price-group">
+                            <span class="price-current" th:text="'₹' + ${#numbers.formatDecimal(product.effectivePrice, 1, 'COMMA', 0, 'POINT')}">₹0</span>
+                            <span th:if="${product.discountPrice != null}" class="price-original" th:text="'₹' + ${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}"></span>
+                        </div>
+                        <form th:action="@{/cart/add}" method="post" class="add-cart-form">
+                            <input type="hidden" name="productId" th:value="${product.id}">
+                            <input type="hidden" name="quantity" value="1">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button type="submit" class="btn-add-cart" th:disabled="${!product.inStock}"
+                                    th:title="${product.inStock} ? 'Add to Cart' : 'Out of Stock'">
+                                <i class="bi bi-bag-plus"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:if="${#lists.isEmpty(featuredProducts)}" class="empty-state">
+            <i class="bi bi-bag-x"></i>
+            <p>No featured products yet. Check back soon!</p>
+        </div>
+    </div>
+</section>
+
+<!-- ===== PROMO BANNER ===== -->
+<section class="promo-banner">
+    <div class="container promo-content">
+        <div class="promo-text">
+            <h2>Exclusive Member Deals</h2>
+            <p>Join ShopEZ and unlock special discounts, early access to sales, and personalized recommendations.</p>
+            <a href="/register" class="btn btn-white">Join for Free</a>
+        </div>
+        <div class="promo-illustration">
+            <div class="promo-circles">
+                <div class="promo-circle c1"><i class="bi bi-percent"></i></div>
+                <div class="promo-circle c2"><i class="bi bi-gift"></i></div>
+                <div class="promo-circle c3"><i class="bi bi-star-fill"></i></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<div th:replace="~{layout :: footer}"></div>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | ShopEZ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body class="admin-body">
+
+<!-- Admin Sidebar -->
+<aside class="admin-sidebar">
+    <div class="admin-brand">
+        <span class="brand-icon"><i class="bi bi-bag-heart-fill"></i></span>
+        <span class="brand-text">ShopEZ Admin</span>
+    </div>
+    <nav class="admin-nav">
+        <a href="/admin/dashboard" class="admin-nav-link active"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="/admin/products" class="admin-nav-link"><i class="bi bi-box-seam"></i> Products</a>
+        <a href="/admin/categories" class="admin-nav-link"><i class="bi bi-tags"></i> Categories</a>
+        <a href="/admin/orders" class="admin-nav-link"><i class="bi bi-receipt"></i> Orders</a>
+        <a href="/admin/users" class="admin-nav-link"><i class="bi bi-people"></i> Users</a>
+        <hr class="admin-divider">
+        <a href="/" class="admin-nav-link"><i class="bi bi-shop"></i> View Store</a>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="admin-nav-link logout-link"><i class="bi bi-box-arrow-right"></i> Logout</button>
+        </form>
+    </nav>
+</aside>
+
+<!-- Admin Main Content -->
+<main class="admin-main">
+    <div class="admin-topbar">
+        <h1 class="admin-page-title"><i class="bi bi-speedometer2"></i> Dashboard</h1>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="admin-stats-grid">
+        <div class="stat-card stat-blue">
+            <div class="stat-icon"><i class="bi bi-box-seam"></i></div>
+            <div class="stat-info">
+                <span class="stat-label">Total Products</span>
+                <span class="stat-value" th:text="${totalProducts}">0</span>
+            </div>
+        </div>
+        <div class="stat-card stat-purple">
+            <div class="stat-icon"><i class="bi bi-receipt"></i></div>
+            <div class="stat-info">
+                <span class="stat-label">Total Orders</span>
+                <span class="stat-value" th:text="${totalOrders}">0</span>
+            </div>
+        </div>
+        <div class="stat-card stat-green">
+            <div class="stat-icon"><i class="bi bi-people"></i></div>
+            <div class="stat-info">
+                <span class="stat-label">Total Users</span>
+                <span class="stat-value" th:text="${totalUsers}">0</span>
+            </div>
+        </div>
+        <div class="stat-card stat-orange">
+            <div class="stat-icon"><i class="bi bi-currency-rupee"></i></div>
+            <div class="stat-info">
+                <span class="stat-label">Revenue</span>
+                <span class="stat-value">₹--</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h2><i class="bi bi-clock-history"></i> Recent Orders</h2>
+            <a href="/admin/orders" class="btn btn-outline btn-sm">View All</a>
+        </div>
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="order : ${recentOrders}">
+                        <td th:text="${order.orderNumber}">ORD-000</td>
+                        <td th:text="${order.user?.fullName}">Customer</td>
+                        <td th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy')}">Date</td>
+                        <td th:text="'₹' + ${#numbers.formatDecimal(order.totalAmount, 1, 'COMMA', 0, 'POINT')}">₹0</td>
+                        <td>
+                            <span class="order-status" th:classappend="'status-' + ${order.status.name().toLowerCase()}"
+                                  th:text="${order.status}">STATUS</span>
+                        </td>
+                        <td>
+                            <a th:href="@{'/orders/' + ${order.id}}" class="btn btn-outline btn-xs">View</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${recentOrders.isEmpty()}">
+                        <td colspan="6" class="text-center">No orders yet</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="admin-quick-actions">
+        <a href="/admin/products" class="quick-action-btn">
+            <i class="bi bi-plus-circle"></i> Add Product
+        </a>
+        <a href="/admin/categories" class="quick-action-btn">
+            <i class="bi bi-tags"></i> Add Category
+        </a>
+        <a href="/admin/orders" class="quick-action-btn">
+            <i class="bi bi-receipt"></i> Manage Orders
+        </a>
+    </div>
+</main>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

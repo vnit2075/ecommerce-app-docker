@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:fragment="title">ShopEZ - Your Shopping Destination</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- ===== NAVBAR FRAGMENT ===== -->
+<nav th:fragment="navbar" class="navbar">
+    <div class="container nav-container">
+        <!-- Brand -->
+        <a href="/" class="nav-brand">
+            <span class="brand-icon"><i class="bi bi-bag-heart-fill"></i></span>
+            <span class="brand-text">ShopEZ</span>
+        </a>
+
+        <!-- Search Bar -->
+        <form action="/products" method="get" class="nav-search">
+            <input type="text" name="keyword" placeholder="Search products, brands..." class="search-input"
+                   th:value="${keyword}">
+            <button type="submit" class="search-btn"><i class="bi bi-search"></i></button>
+        </form>
+
+        <!-- Nav Actions -->
+        <div class="nav-actions">
+            <a href="/products" class="nav-link-item">
+                <i class="bi bi-grid-3x3-gap"></i>
+                <span>Products</span>
+            </a>
+
+            <!-- Cart Icon -->
+            <a href="/cart" class="nav-link-item cart-icon">
+                <i class="bi bi-bag"></i>
+                <span>Cart</span>
+                <span class="cart-badge" th:if="${cartCount != null and cartCount > 0}" th:text="${cartCount}">0</span>
+            </a>
+
+            <!-- Auth Section -->
+            <div sec:authorize="!isAuthenticated()" class="nav-auth">
+                <a href="/login" class="btn btn-outline">Login</a>
+                <a href="/register" class="btn btn-primary">Sign Up</a>
+            </div>
+
+            <div sec:authorize="isAuthenticated()" class="nav-user-menu">
+                <div class="user-avatar" id="userMenuTrigger">
+                    <i class="bi bi-person-circle"></i>
+                    <i class="bi bi-chevron-down"></i>
+                </div>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="dropdown-header">
+                        <span sec:authentication="name">user@email.com</span>
+                    </div>
+                    <a href="/orders" class="dropdown-item"><i class="bi bi-box-seam"></i> My Orders</a>
+                    <div sec:authorize="hasRole('ADMIN')">
+                        <hr class="dropdown-divider">
+                        <a href="/admin/dashboard" class="dropdown-item admin-link">
+                            <i class="bi bi-speedometer2"></i> Admin Panel
+                        </a>
+                    </div>
+                    <hr class="dropdown-divider">
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="dropdown-item logout-btn">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hamburger -->
+        <button class="hamburger" id="hamburger">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+
+    <!-- Mobile Nav -->
+    <div class="mobile-nav" id="mobileNav">
+        <form action="/products" method="get" class="mobile-search">
+            <input type="text" name="keyword" placeholder="Search..." class="search-input">
+            <button type="submit" class="search-btn"><i class="bi bi-search"></i></button>
+        </form>
+        <a href="/" class="mobile-nav-link">Home</a>
+        <a href="/products" class="mobile-nav-link">Products</a>
+        <a href="/cart" class="mobile-nav-link">Cart <span th:text="${cartCount}" class="cart-badge-mobile">0</span></a>
+        <div sec:authorize="!isAuthenticated()">
+            <a href="/login" class="mobile-nav-link">Login</a>
+            <a href="/register" class="mobile-nav-link">Register</a>
+        </div>
+        <div sec:authorize="isAuthenticated()">
+            <a href="/orders" class="mobile-nav-link">My Orders</a>
+            <a href="/admin/dashboard" sec:authorize="hasRole('ADMIN')" class="mobile-nav-link">Admin Panel</a>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="mobile-nav-link logout-btn-mobile">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== FOOTER FRAGMENT ===== -->
+<footer th:fragment="footer" class="footer">
+    <div class="container footer-grid">
+        <div class="footer-brand">
+            <div class="footer-logo">
+                <span class="brand-icon"><i class="bi bi-bag-heart-fill"></i></span>
+                <span class="brand-text">ShopEZ</span>
+            </div>
+            <p>Your one-stop destination for premium products at unbeatable prices.</p>
+            <div class="social-links">
+                <a href="#"><i class="bi bi-facebook"></i></a>
+                <a href="#"><i class="bi bi-twitter-x"></i></a>
+                <a href="#"><i class="bi bi-instagram"></i></a>
+                <a href="#"><i class="bi bi-linkedin"></i></a>
+            </div>
+        </div>
+        <div class="footer-col">
+            <h4>Shop</h4>
+            <a href="/products">All Products</a>
+            <a href="/category/1">Electronics</a>
+            <a href="/category/2">Fashion</a>
+            <a href="/category/3">Home &amp; Living</a>
+        </div>
+        <div class="footer-col">
+            <h4>Account</h4>
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+            <a href="/orders">My Orders</a>
+            <a href="/cart">Shopping Cart</a>
+        </div>
+        <div class="footer-col">
+            <h4>Support</h4>
+            <a href="#">Help Center</a>
+            <a href="#">Returns &amp; Refunds</a>
+            <a href="#">Track Order</a>
+            <a href="#">Contact Us</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 ShopEZ. Built with Spring Boot &amp; MySQL.</p>
+    </div>
+</footer>
+
+<!-- Main JS -->
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

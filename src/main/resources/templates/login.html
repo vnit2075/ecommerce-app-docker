@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | ShopEZ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+
+<div class="auth-container">
+    <div class="auth-brand">
+        <a href="/" class="auth-logo">
+            <span class="brand-icon"><i class="bi bi-bag-heart-fill"></i></span>
+            <span class="brand-text">ShopEZ</span>
+        </a>
+        <p class="auth-tagline">Your Premium Shopping Destination</p>
+    </div>
+
+    <div class="auth-card">
+        <h2 class="auth-title">Welcome Back</h2>
+        <p class="auth-subtitle">Sign in to continue shopping</p>
+
+        <!-- Flash Messages -->
+        <div th:if="${param.error}" class="alert alert-error">
+            <i class="bi bi-exclamation-circle"></i> Invalid email or password.
+        </div>
+        <div th:if="${param.logout}" class="alert alert-success">
+            <i class="bi bi-check-circle"></i> Logged out successfully.
+        </div>
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+        <form th:action="@{/login}" method="post" class="auth-form">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <div class="input-group">
+                    <span class="input-icon"><i class="bi bi-envelope"></i></span>
+                    <input type="email" name="username" id="email" class="form-input"
+                           placeholder="you@example.com" required autofocus>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <div class="input-group">
+                    <span class="input-icon"><i class="bi bi-lock"></i></span>
+                    <input type="password" name="password" id="password" class="form-input"
+                           placeholder="••••••••" required>
+                    <button type="button" class="input-toggle" onclick="togglePassword('password', this)">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" id="loginBtn" class="btn btn-primary btn-full btn-lg">
+                <i class="bi bi-box-arrow-in-right"></i> Sign In
+            </button>
+        </form>
+
+        <!-- Demo Credentials -->
+        <div class="demo-creds">
+            <p class="demo-title">Demo Credentials</p>
+            <div class="demo-row">
+                <div>
+                    <strong>Customer:</strong> john@example.com / john1234
+                </div>
+                <button class="demo-fill-btn" onclick="fillDemo('john@example.com','john1234')">Fill</button>
+            </div>
+            <div class="demo-row">
+                <div>
+                    <strong>Admin:</strong> admin@shopez.com / admin123
+                </div>
+                <button class="demo-fill-btn" onclick="fillDemo('admin@shopez.com','admin123')">Fill</button>
+            </div>
+        </div>
+
+        <div class="auth-footer">
+            <span>Don't have an account?</span>
+            <a href="/register" class="auth-link">Create Account</a>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/main.js}"></script>
+<script>
+    function togglePassword(id, btn) {
+        const input = document.getElementById(id);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('bi-eye', 'bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('bi-eye-slash', 'bi-eye');
+        }
+    }
+    function fillDemo(email, pass) {
+        document.getElementById('email').value = email;
+        document.getElementById('password').value = pass;
+    }
+</script>
+</body>
+</html>

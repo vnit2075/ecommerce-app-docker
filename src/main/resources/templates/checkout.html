@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | ShopEZ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{layout :: navbar}"></div>
+
+<div class="page-header">
+    <div class="container">
+        <h1 class="page-title"><i class="bi bi-credit-card"></i> Checkout</h1>
+        <p class="page-subtitle">Almost there! Fill in your details to complete the order.</p>
+    </div>
+</div>
+
+<div class="container checkout-layout">
+    <!-- Checkout Form -->
+    <div class="checkout-form-wrap">
+        <!-- Error Message -->
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <form th:action="@{/checkout}" method="post" class="checkout-form">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+            <!-- Shipping Address -->
+            <div class="form-section">
+                <h3 class="form-section-title"><i class="bi bi-geo-alt"></i> Shipping Address</h3>
+                <div class="form-group">
+                    <label class="form-label">Full Address *</label>
+                    <input type="text" name="address" id="address" class="form-input"
+                           placeholder="House no., Street, Area" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">City *</label>
+                        <input type="text" name="city" id="city" class="form-input" placeholder="Mumbai" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">State *</label>
+                        <input type="text" name="state" id="state" class="form-input" placeholder="Maharashtra" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">PIN Code *</label>
+                        <input type="text" name="zip" id="zip" class="form-input" placeholder="400001"
+                               pattern="[0-9]{6}" maxlength="6" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Country</label>
+                        <input type="text" name="country" id="country" class="form-input" value="India" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="form-section">
+                <h3 class="form-section-title"><i class="bi bi-wallet2"></i> Payment Method</h3>
+                <div class="payment-options">
+                    <label th:each="pm : ${paymentMethods}" class="payment-option">
+                        <input type="radio" name="paymentMethod" th:value="${pm.name()}"
+                               th:checked="${pm.name() == 'COD'}">
+                        <div class="payment-card">
+                            <div class="payment-icon">
+                                <i class="bi bi-cash-coin" th:if="${pm.name() == 'COD'}"></i>
+                                <i class="bi bi-credit-card" th:if="${pm.name() == 'CREDIT_CARD'}"></i>
+                                <i class="bi bi-credit-card-2-front" th:if="${pm.name() == 'DEBIT_CARD'}"></i>
+                                <i class="bi bi-bank" th:if="${pm.name() == 'NET_BANKING'}"></i>
+                                <i class="bi bi-phone" th:if="${pm.name() == 'UPI'}"></i>
+                            </div>
+                            <span class="payment-label" th:text="${pm.name().replace('_', ' ')}">Payment</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full btn-lg">
+                <i class="bi bi-bag-check-fill"></i>
+                Place Order — ₹<span th:text="${#numbers.formatDecimal(cart.totalPrice, 1, 'COMMA', 0, 'POINT')}">0</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="checkout-summary">
+        <div class="summary-card">
+            <h3 class="summary-title">Your Order</h3>
+            <div th:each="item : ${cart.items}" class="checkout-item">
+                <div class="checkout-item-img">
+                    <img th:src="${item.product.imageUrl}" th:alt="${item.product.name}"
+                         onerror="this.src='/images/no-image.png'">
+                    <span class="checkout-item-qty" th:text="${item.quantity}">1</span>
+                </div>
+                <div class="checkout-item-name">
+                    <span th:text="${item.product.name}">Product</span>
+                    <span class="checkout-item-brand" th:text="${item.product.brand}">Brand</span>
+                </div>
+                <div class="checkout-item-price"
+                     th:text="'₹' + ${#numbers.formatDecimal(item.product.effectivePrice.multiply(T(java.math.BigDecimal).valueOf(item.quantity)), 1, 'COMMA', 0, 'POINT')}">₹0</div>
+            </div>
+            <hr>
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span th:text="'₹' + ${#numbers.formatDecimal(cart.totalPrice, 1, 'COMMA', 0, 'POINT')}">₹0</span>
+            </div>
+            <div class="summary-row">
+                <span>Delivery</span>
+                <span class="text-success">Free</span>
+            </div>
+            <div class="summary-row summary-total">
+                <span>Total</span>
+                <span th:text="'₹' + ${#numbers.formatDecimal(cart.totalPrice, 1, 'COMMA', 0, 'POINT')}">₹0</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{layout :: footer}"></div>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>
